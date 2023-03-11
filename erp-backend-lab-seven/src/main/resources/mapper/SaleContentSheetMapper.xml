@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.erp.dao.SaleReturnsSheetDao">
+    <select id="getLatest" resultMap="SaleReturnsSheetPO">
+        select * from sale_returns_sheet order by id desc limit 0,1 ;
+    </select>
+
+    <select id="findOneById" resultType="com.nju.edu.erp.model.po.SaleReturnsSheetPO">
+        select * from sale_returns_sheet where id=#{saleReturnsSheetId}
+    </select>
+
+    <update id="updateState">
+        update sale_returns_sheet
+        set state = #{state}
+        where id = #{saleReturnsSheetId}
+    </update>
+    <update id="updateStateV2">
+        update sale_returns_sheet
+        set state = #{state}
+        where id = #{saleReturnsSheetId} and state = #{prevState}
+    </update>
+
+    <insert id="saveSheet" parameterType="SaleReturnsSheetPO">
+        insert into sale_returns_sheet (id, supplier, operator, state, create_time, total_amount, remark)
+        values (#{id}, #{supplier}, #{operator}, #{operator}, #{state}, #{createTime}, #{totalAmount}, #{remark})
+    </insert>
+
+    <insert id="saveSheetContent" useGeneratedKeys="true" keyProperty="id">
+        insert into sale_returns_sheet_content (id, saleReturnsSheetId, pid, quantity, total_price, remark) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id}, #{item.saleReturnsSheetId}, #{item.pid}, #{item.quantity}, #{item.totalPrice}, #{item.remark})
+        </foreach>
+    </insert>
+
+    <select id="findAllSheet" resultType="com.nju.edu.erp.model.po.SaleReturnsSheetPO">
+        select * from sale_returns_sheet;
+    </select>
+
+    <select id="findAllByState">
+        select * from sale_returns_sheet where state = #{state};
+    </select>
+
+    <select id="findContentBySaleReturnsSheetId" resultType="com.nju.edu.erp.model.po.SaleReturnsSheetContentPO">
+        select * from sale_returns_sheet_content where sale_returns_sheet_id = #{id};
+    </select>
+
+    <resultMap id="SaleReturnsSheetPO" type="com.nju.edu.erp.model.po.SaleReturnsSheetPO">
+        <id column="id" property="id"></id>
+        <result column="supplier" property="supplier"></result>
+        <result column="operator" property="operator"></result>
+        <result column="remark" property="remark"></result>
+        <result column="total_amount" property="totalAmount"></result>
+        <result column="state" property="state"></result>
+        <result column="create_time" property="createTime"></result>
+    </resultMap>
+
+    <select id="selectSheetByParam" parameterType="com.nju.edu.erp.model.vo.table.SaleDetailParamsVO" resultType="com.nju.edu.erp.model.po.SaleReturnsSheetPO">
+        select * from sale_returns_sheet
+        <where>
+            <if test="operator!=null">
+                and operator = #{operator}
+            </if>
+            <if test="customer!=null">
+                and supplier = #{customer}
+            </if>
+            <if test="beginTime!=null and endTime!=null">
+                and create_time between DATE_FORMAT(#{beginTime}, '%Y-%m-%d %H:%m:%s') and DATE_FORMAT(#{endTime}, '%Y-%m-%d %H:%m:%s')
+            </if>
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.erp.dao.StaffDao">
+    <select id="showAllStaff" resultType="com.nju.edu.erp.model.po.StaffPO">
+        SELECT * FROM staff
+    </select>
+
+    <insert id="addStaff" parameterType="com.nju.edu.erp.model.po.StaffPO">
+        INSERT INTO staff(name,gender,birthday,phone,role,bank_card,performance_salary)
+        VALUES (#{name},#{gender},#{birthday},#{phone},#{role},#{bankCard},#{performanceSalary})
+    </insert>
+
+    <insert id="clockIn" parameterType="com.nju.edu.erp.model.po.ClockInPO">
+        INSERT INTO staff_checkup(staff_name,date)
+        VALUES (#{staffName},date_format(#{date},'%Y-%m-%d'))
+    </insert>
+
+    <select id="showStaffInfo" resultType="com.nju.edu.erp.model.vo.StaffInfoVO">
+        SELECT s.*, r.role_salary, r.salary_calculate, r.salary_release
+        FROM staff s, role r
+        WHERE s.role = r.role_name
+    </select>
+
+    <select id="selectById" resultType="com.nju.edu.erp.model.po.ClockInPO">
+        SELECT * FROM  staff_checkup
+        WHERE  staff_name = #{name}
+    </select>
+
+    <update id="updateSalary">
+        UPDATE `role`
+        SET role_salary = #{salary}
+        WHERE role_name = #{role}
+    </update>
+
+
+
+</mapper>

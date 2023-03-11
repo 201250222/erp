@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.erp.dao.BonusDao">
+
+    <insert id="makeBonus" parameterType="com.nju.edu.erp.model.po.BonusPO">
+        INSERT INTO `bonus`(staff_id, staff_name,staff_bank_card,origin_salary,
+                            tax,absence_deduction,actual_salary,bonus)
+        VALUES(#{staffId},#{staffName},#{staffBankCard},#{originSalary},
+               #{tax},#{absenceDeduction},#{actualSalary},#{bonus})
+    </insert>
+
+    <select id="showBonus" resultType="com.nju.edu.erp.model.po.BonusPO">
+        SELECT * FROM `bonus`
+    </select>
+
+    <select id="selectBonusById" resultType="com.nju.edu.erp.model.po.BonusPO">
+        SELECT * FROM `bonus` WHERE `staff_id` = #{id}
+    </select>
+
+    <update id="updateOneBonus" parameterType="com.nju.edu.erp.model.po.BonusPO">
+        UPDATE `bonus` b SET b.`bonus` = #{bonus}
+        WHERE b.`staff_id` = #{staffId}
+    </update>
+
+    <delete id="deleteAll">
+        DELETE FROM `bonus` WHERE 1=1
+    </delete>
+
+</mapper>

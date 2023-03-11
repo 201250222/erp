@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.erp.dao.EstablishmentDao">
+
+    <insert id="addCategory" parameterType="com.nju.edu.erp.model.po.CategoryPO">
+        INSERT INTO `establishment_category`(name, parent_id,is_leaf,item_count,item_index)
+        VALUES(#{name}, #{parentId}, #{isLeaf},#{itemCount},#{itemIndex})
+    </insert>
+
+    <select id="showCategory" resultType="com.nju.edu.erp.model.vo.CategoryVO">
+        SELECT * FROM `establishment_category`
+    </select>
+
+    <select id="selectCategory" parameterType="com.nju.edu.erp.model.vo.CategoryVO" resultType="com.nju.edu.erp.model.vo.CategoryVO">
+        SELECT * FROM `establishment_category`
+        <where>
+            <if test="id!=null">
+                `id` = #{id}
+            </if>
+            <if test="name!=null">
+                AND `name` = #{name}
+            </if>
+        </where>
+    </select>
+
+    <insert id="addProduct" parameterType="com.nju.edu.erp.model.po.ProductPO">
+        insert into `establishment_product` (id, `name`, category_id, `type`, purchase_price, retail_price)
+        values (#{id}, #{name}, #{categoryId}, #{type}, #{purchasePrice}, #{retailPrice})
+    </insert>
+
+    <select id="showProduct" resultType="com.nju.edu.erp.model.vo.ProductInfoVO">
+        SELECT * FROM `establishment_product`
+    </select>
+
+    <select id="selectProduct" parameterType="com.nju.edu.erp.model.vo.ProductInfoVO" resultType="com.nju.edu.erp.model.vo.ProductInfoVO">
+        SELECT * FROM `establishment_product`
+        <where>
+            <if test="id!=null">
+                `id` = #{id}
+            </if>
+            <if test="name!=null">
+                AND `name` = #{name}
+            </if>
+            <if test="categoryId!=null">
+                AND `category_id` = #{categoryId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="addCustomer" parameterType="com.nju.edu.erp.model.po.CustomerPO">
+        INSERT INTO `establishment_customer`(`type`,`level`,`name`,`phone`,`address`,
+                               `zipcode`,`email`,`line_of_credit`,`receivable`,`payable`,`operator`)
+        VALUES (#{type},#{level},#{name},#{phone},#{address},
+                #{zipcode},#{email},#{lineOfCredit},#{receivable},#{payable},#{operator})
+    </insert>
+
+    <select id="showCustomer" resultType="com.nju.edu.erp.model.vo.CustomerVO">
+        SELECT * FROM `establishment_customer`
+    </select>
+
+    <select id="selectCustomer" parameterType="com.nju.edu.erp.model.vo.CustomerVO" resultType="com.nju.edu.erp.model.vo.CustomerVO">
+        SELECT * FROM `establishment_customer`
+        <where>
+            <if test="id!=null">
+                `id` = #{id}
+            </if>
+            <if test="name!=null">
+                AND `name` = #{name}
+            </if>
+            <if test="level!=null">
+                AND `level` = #{level}
+            </if>
+            <if test="type!=null">
+                AND `type` = #{type}
+            </if>
+        </where>
+    </select>
+
+    <insert id="addAccount" parameterType="com.nju.edu.erp.model.po.AccountPO">
+        insert into `establishment_account` (name, cardNum)
+        values (#{name}, #{cardNum});
+    </insert>
+
+    <select id="showAccount" resultType="com.nju.edu.erp.model.vo.AccountVO">
+        SELECT * FROM `establishment_account`
+    </select>
+
+    <select id="selectAccount" parameterType="com.nju.edu.erp.model.vo.AccountVO" resultType="com.nju.edu.erp.model.vo.AccountVO">
+        SELECT * FROM `establishment_account`
+        <where>
+            <if test="name!=null">
+                `name` = #{name}
+            </if>
+            <if test="cardNum!=null">
+                AND `cardNum` = #{cardNum}
+            </if>
+        </where>
+    </select>
+
+    <select id="averagePurchase" resultType="java.math.BigDecimal">
+        select avg(unit_price) from `purchase_sheet_content`
+        group by pid having pid = #{pid}
+    </select>
+
+    <select id="averageRetail" resultType="java.math.BigDecimal">
+        select avg(unit_price) from `sale_sheet_content`
+        group by pid having pid = #{pid}
+    </select>
+
+    <select id="selectCustomerByName" resultType="com.nju.edu.erp.model.po.CustomerPO">
+        select * from `customer` where `name` = #{name}
+    </select>
+
+</mapper>

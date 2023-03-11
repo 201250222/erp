@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.erp.dao.SalaryDao">
+    <insert id="save" parameterType="SalarySheetPO">
+        insert into salary_sheet (id, staff_id, staff_name, release_date, staff_bank_card, origin_salary, tax, absence_deduction, actual_salary, operator, create_time, state)
+        values (#{id},#{staffID},#{staffName},#{releaseDate},#{staffBankCard},#{originSalary},#{tax},#{absenceDeduction},#{actualSalary},#{operator},#{createTime},#{state})
+    </insert>
+    <update id="updateState">
+        update salary_sheet
+        set state = #{state}
+        where id = #{salarySheetId}
+    </update>
+
+    <select id="getLatest" resultMap="SalarySheetPO">
+        select * from salary_sheet order by id desc limit 0,1 ;
+    </select>
+    <select id="findAll" resultMap="SalarySheetPO">
+        select * from salary_sheet;
+    </select>
+    <select id="findAllByState" resultMap="SalarySheetPO">
+        select * from salary_sheet where state = #{state}
+    </select>
+    <select id="findOneById" resultMap="SalarySheetPO">
+        select * from salary_sheet where id=#{salarySheetId}
+    </select>
+
+    <select id="findByDateAndStaffName" resultMap="SalarySheetPO">
+        select * from salary_sheet where release_date=#{releaseDate} and staff_name=#{staffName}
+    </select>
+
+    <resultMap id="SalarySheetPO" type="com.nju.edu.erp.model.po.SalarySheetPO">
+        <id column="id" property="id"/>
+        <result column="staff_id" property="staffID"/>
+        <result column="staff_name" property="staffName"/>
+        <result column="release_date" property="releaseDate"/>
+        <result column="staff_bank_card" property="staffBankCard"/>
+        <result column="origin_salary" property="originSalary"/>
+        <result column="tax" property="tax"/>
+        <result column="absence_deduction" property="absenceDeduction"/>
+        <result column="actual_salary" property="actualSalary"/>
+        <result column="operator" property="operator"/>
+        <result column="create_time" property="createTime"/>
+        <result column="state" property="state"/>
+    </resultMap>
+
+    <select id="findAllSum" resultMap="SalarySheetPO">
+        SELECT staff_name,
+               sum(origin_salary) as origin_salary,sum(tax) as tax,
+               sum(absence_deduction) as absence_deduction,sum(actual_salary) as actual_salary
+        FROM salary_sheet
+        GROUP BY staff_name HAVING staff_name = #{staffName}
+    </select>
+</mapper>

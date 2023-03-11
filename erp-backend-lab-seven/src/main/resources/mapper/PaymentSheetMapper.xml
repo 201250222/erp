@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nju.edu.erp.dao.PaymentSheetDao">
+<!-- resultType="com.nju.edu.erp.model.po.PaymentSheetPO"-->
+    <select id="getLatest" resultMap="SheetPO">
+        select * from payment_sheet order by id desc limit 0,1;
+    </select>
+
+    <insert id="addPaymentSheet" parameterType="com.nju.edu.erp.model.po.PaymentSheetPO">
+        insert into payment_sheet (id,account_name, operator, total_amount, state, create_time)
+        values (#{id},#{accountName}, #{operator}, #{totalAmount}, #{paymentSheetState},#{createTime});
+    </insert>
+
+    <insert id="saveBatch" useGeneratedKeys="true" keyProperty="id" parameterType="com.nju.edu.erp.model.po.PaymentSheetContentPO">
+        insert into payment_sheet_content (payment_sheet_id, customer, amount, remark) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.paymentSheetId}, #{item.customer}, #{item.amount}, #{item.remark})
+        </foreach>
+    </insert>
+
+    <select id="selectAllPaymentSheet" resultMap="SheetPO">
+        select * from payment_sheet;
+    </select>
+
+    <select id="selectPaymentSheetByState" resultMap="SheetPO">
+        select * from payment_sheet
+        where state = #{state};
+    </select>
+
+    <update id="updatePaymentSheet">
+        update payment_sheet
+        set state = #{state}
+        where payment_sheet_id = #{paymentSheetId};
+    </update>
+
+    <select id="selectPaymentSheetById" resultMap="SheetPO">
+        select * from payment_sheet
+        where id = #{paymentSheetId};
+    </select>
+
+    <select id="selectPaymentSheetContentById" resultType="com.nju.edu.erp.model.po.PaymentSheetContentPO">
+        select * from payment_sheet_content
+        where payment_sheet_id = #{paymentSheetId};
+    </select>
+
+    <select id="selectPaymentSheetByDate" resultMap="SheetPO">
+        select * from payment_sheet
+        where create_time between #{beginTime} and #{endTime}
+    </select>
+
+    <resultMap id="SheetPO" type="com.nju.edu.erp.model.po.PaymentSheetPO">
+        <id column="id" property="id"></id>
+        <result column="account_name" property="accountName"></result>
+        <result column="operator" property="operator"></result>
+        <result column="account_amount" property="accountAmount"></result>
+        <result column="state" property="paymentSheetState"></result>
+        <result column="create_time" property="createTime"></result>
+    </resultMap>
+
+    <resultMap id="SheetContentPO" type="com.nju.edu.erp.model.po.PaymentSheetContentPO">
+        <id column="id" property="id"></id>
+        <result column="payment_sheet_id" property="paymentSheetId"></result>
+        <result column="customer" property="customer"></result>
+        <result column="amount" property="amount"></result>
+        <result column="remark" property="remark"></result>
+    </resultMap>
+
+    <select id="getStateById" resultType="String">
+        SELECT state FROM payment_sheet
+        WHERE id = #{id}
+    </select>
+
+</mapper>
